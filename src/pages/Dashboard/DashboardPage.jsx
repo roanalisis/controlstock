@@ -81,7 +81,7 @@ export default function DashboardPage() {
             Reporte de Ventas y Stock
             {reportes.length > 0 && (
               <span className="dashboard__section-dates">
-                {[...new Set(reportes.map((r) => r.fecha))].join(' · ')}
+                {reportes[0].fecha?.split('T')[0]}
               </span>
             )}
           </h2>
