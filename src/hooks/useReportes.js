@@ -9,11 +9,11 @@ export function useReportes() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const cargarReportes = useCallback(async (fecha = null) => {
+  const cargarReportes = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await reporteService.obtenerReportes(fecha);
+      const data = await reporteService.obtenerReportes();
       setReportes(data);
     } catch (err) {
       setError(err.response?.data?.detail || 'Error al cargar reportes');

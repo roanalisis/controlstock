@@ -9,9 +9,8 @@ const reporteService = {
    * @param {string|null} fecha - Formato YYYY-MM-DD
    * @returns {Promise<Array>}
    */
-  async obtenerReportes(fecha = null) {
-    const params = fecha ? { fecha } : {};
-    const response = await api.get('/reportes/', { params });
+  async obtenerReportes() {
+    const response = await api.get('/reportes/');
     return response.data;
   },
 };

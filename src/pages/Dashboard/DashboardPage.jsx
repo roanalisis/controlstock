@@ -13,14 +13,11 @@ export default function DashboardPage() {
   const { reportes, loading, error, cargarReportes } = useReportes();
   const { guardarConfiguracion } = useStockCritico();
 
-  const [fechaFiltro, setFechaFiltro] = useState(
-    new Date().toISOString().split('T')[0]
-  );
   const [modalProducto, setModalProducto] = useState(null);
 
   const handleConsultar = useCallback(() => {
-    cargarReportes(fechaFiltro || null);
-  }, [fechaFiltro, cargarReportes]);
+    cargarReportes();
+  }, [cargarReportes]);
 
   // Cargar datos al montar
   useEffect(() => {
@@ -31,8 +28,7 @@ export default function DashboardPage() {
     const ok = await guardarConfiguracion(producto, valor);
     if (ok) {
       setModalProducto(null);
-      // Recargar reportes para reflejar el nuevo valor crítico
-      cargarReportes(fechaFiltro || null);
+      cargarReportes();
     }
   };
 
@@ -54,25 +50,6 @@ export default function DashboardPage() {
       <Navbar />
 
       <main className="dashboard__content">
-        {/* ── Filtros ────────────────────────────────── */}
-        <section className="dashboard__filters">
-          <div className="filters__group">
-            <label htmlFor="fecha" className="filters__label">
-              Fecha del reporte
-            </label>
-            <input
-              id="fecha"
-              type="date"
-              className="filters__date-input"
-              value={fechaFiltro}
-              onChange={(e) => setFechaFiltro(e.target.value)}
-            />
-          </div>
-          <button className="filters__button" onClick={handleConsultar} disabled={loading}>
-            {loading ? 'Consultando...' : '🔍 Consultar'}
-          </button>
-        </section>
-
         {/* ── Tarjetas resumen ───────────────────────── */}
         <section className="dashboard__summary">
           <div className="summary-card">
@@ -100,7 +77,14 @@ export default function DashboardPage() {
 
         {/* ── Tabla de reportes ──────────────────────── */}
         <section className="dashboard__table-section">
-          <h2 className="dashboard__section-title">Reporte de Ventas y Stock</h2>
+          <h2 className="dashboard__section-title">
+            Reporte de Ventas y Stock
+            {reportes.length > 0 && (
+              <span className="dashboard__section-dates">
+                {[...new Set(reportes.map((r) => r.fecha))].join(' · ')}
+              </span>
+            )}
+          </h2>
 
           {error && <div className="dashboard__error">⚠️ {error}</div>}
 
@@ -109,10 +93,7 @@ export default function DashboardPage() {
           ) : reportes.length === 0 ? (
             <div className="dashboard__empty">
               <span className="dashboard__empty-icon">📋</span>
-              <p>No hay reportes para la fecha seleccionada.</p>
-              <p className="dashboard__empty-hint">
-                Selecciona otra fecha o consulta sin filtro.
-              </p>
+              <p>No hay reportes disponibles.</p>
             </div>
           ) : (
             <div className="table-responsive">
@@ -123,7 +104,6 @@ export default function DashboardPage() {
                     <th className="text-right">Vendidos</th>
                     <th className="text-right">Stock Actual</th>
                     <th className="text-right">Stock Crítico</th>
-                    <th className="text-center">Fecha</th>
                     <th className="text-center">Acciones</th>
                   </tr>
                 </thead>
@@ -148,9 +128,6 @@ export default function DashboardPage() {
                           {reporte.valor_critico != null
                             ? reporte.valor_critico
                             : '—'}
-                        </td>
-                        <td className={`text-center ${critico ? 'text-danger' : ''}`}>
-                          {reporte.fecha}
                         </td>
                         <td className="text-center">
                           <button
