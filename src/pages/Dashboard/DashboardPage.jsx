@@ -103,8 +103,6 @@ export default function DashboardPage() {
                     <th>Producto</th>
                     <th className="text-right">Vendidos</th>
                     <th className="text-right">Stock Actual</th>
-                    <th className="text-right">Stock Crítico</th>
-                    <th className="text-center">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,23 +111,6 @@ export default function DashboardPage() {
                     return (
                       <tr key={reporte.id} className={critico ? 'row--critico' : ''}>
                         <td className="cell-producto">
-                          {critico && <span className="badge-critico">!</span>}
-                          <span className={critico ? 'text-danger' : ''}>
-                            {reporte.producto}
-                          </span>
-                        </td>
-                        <td className={`text-right ${critico ? 'text-danger' : ''}`}>
-                          {reporte.cantidad_vendida}
-                        </td>
-                        <td className={`text-right ${critico ? 'text-danger font-bold' : ''}`}>
-                          {reporte.stock_actual}
-                        </td>
-                        <td className="text-right text-muted">
-                          {reporte.valor_critico != null
-                            ? reporte.valor_critico
-                            : '—'}
-                        </td>
-                        <td className="text-center">
                           <button
                             className="btn-config"
                             title="Configurar stock crítico"
@@ -142,6 +123,16 @@ export default function DashboardPage() {
                           >
                             ⚙️
                           </button>
+                          {critico && <span className="badge-critico">!</span>}
+                          <span className={critico ? 'text-danger' : ''}>
+                            {reporte.producto}
+                          </span>
+                        </td>
+                        <td className={`text-right ${critico ? 'text-danger' : ''}`}>
+                          {reporte.cantidad_vendida}
+                        </td>
+                        <td className={`text-right ${critico ? 'text-danger font-bold' : ''}`}>
+                          {reporte.stock_actual}
                         </td>
                       </tr>
                     );
