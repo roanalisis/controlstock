@@ -103,6 +103,7 @@ export default function DashboardPage() {
                     <th>Producto</th>
                     <th className="text-right">Vendidos</th>
                     <th className="text-right">Stock Actual</th>
+                    <th className="text-center">Fecha</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,6 +134,9 @@ export default function DashboardPage() {
                         </td>
                         <td className={`text-right ${critico ? 'text-danger font-bold' : ''}`}>
                           {reporte.stock_actual}
+                        </td>
+                        <td className="text-center text-muted">
+                          {reporte.fecha ? reporte.fecha.split('T')[0] : '—'}
                         </td>
                       </tr>
                     );
