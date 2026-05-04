@@ -25,6 +25,7 @@ export default function ProductTable({ reportes, onConfigurarCritico }) {
             <th className="text-right">Stock Actual</th>
             <th className="text-right">Stock Crítico</th>
             <th className="text-center">Acciones</th>
+            <th className="text-center">Fecha</th>
           </tr>
         </thead>
         <tbody>
@@ -56,6 +57,9 @@ export default function ProductTable({ reportes, onConfigurarCritico }) {
                   >
                     ⚙️ Configurar
                   </button>
+                </td>
+                <td className="text-center text-muted">
+                  {reporte.fecha ?? '—'}
                 </td>
               </tr>
             );
