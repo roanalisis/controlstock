@@ -41,7 +41,7 @@ export default function DashboardPage() {
   };
 
   // Resumen estadístico
-  const totalVendido = reportes.reduce((sum, r) => sum + r.cantidad_vendida, 0);
+  const totalVendido = reportes.reduce((sum, r) => sum + r.cantidad, 0);
   const totalProductos = new Set(reportes.map((r) => r.producto)).size;
   const productosCriticos = reportes.filter(esCritico).length;
 
@@ -101,7 +101,7 @@ export default function DashboardPage() {
                 <thead>
                   <tr>
                     <th>Producto</th>
-                    <th className="text-right">Vendidos</th>
+                    <th className="text-right">Vendidos en el día</th>
                     <th className="text-right">Stock Actual</th>
                     <th className="text-center">Fecha</th>
                   </tr>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
                           </span>
                         </td>
                         <td className={`text-right ${critico ? 'text-danger' : ''}`}>
-                          {reporte.cantidad_vendida}
+                          {reporte.cantidad}
                         </td>
                         <td className={`text-right ${critico ? 'text-danger font-bold' : ''}`}>
                           {reporte.stock_actual}
