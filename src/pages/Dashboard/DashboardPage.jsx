@@ -100,6 +100,7 @@ export default function DashboardPage() {
               <table className="stock-table">
                 <thead>
                   <tr>
+                    <th className="text-center">#</th>
                     <th>Producto</th>
                     <th className="text-right">Vendidos en el día</th>
                     <th className="text-right">Stock Actual</th>
@@ -107,10 +108,11 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {reportes.map((reporte) => {
+                  {reportes.map((reporte, index) => {
                     const critico = esCritico(reporte);
                     return (
                       <tr key={reporte.id} className={critico ? 'row--critico' : ''}>
+                        <td className="text-center text-muted">{index + 1}</td>
                         <td className="cell-producto">
                           <button
                             className="btn-config"
