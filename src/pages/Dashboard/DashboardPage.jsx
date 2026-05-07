@@ -14,6 +14,15 @@ export default function DashboardPage() {
   const { guardarConfiguracion } = useStockCritico();
 
   const [modalProducto, setModalProducto] = useState(null);
+  const [seleccionados, setSeleccionados] = useState([]);
+
+  const handleAgregar = (producto) => {
+    setSeleccionados((prev) => [...prev, producto]);
+  };
+
+  const handleCopiar = () => {
+    navigator.clipboard.writeText(seleccionados.join('\n'));
+  };
 
   const handleConsultar = useCallback(() => {
     cargarReportes();
@@ -112,22 +121,32 @@ export default function DashboardPage() {
                     return (
                       <tr key={reporte.id} className={critico ? 'row--critico' : ''}>
                         <td className="cell-producto">
+                          <div className="cell-producto__info">
+                            <button
+                              className="btn-config"
+                              title="Configurar stock crítico"
+                              onClick={() =>
+                                setModalProducto({
+                                  producto: reporte.producto,
+                                  valorActual: reporte.valor_critico,
+                                })
+                              }
+                            >
+                              ⚙️
+                            </button>
+                            {critico && <span className="badge-critico">!</span>}
+                            <span className={critico ? 'text-danger' : ''}>
+                              {reporte.producto}
+                            </span>
+                          </div>
                           <button
-                            className="btn-config"
-                            title="Configurar stock crítico"
-                            onClick={() =>
-                              setModalProducto({
-                                producto: reporte.producto,
-                                valorActual: reporte.valor_critico,
-                              })
-                            }
+                            className="btn-agregar"
+                            title="Agregar a la lista"
+                            disabled={seleccionados.includes(reporte.producto)}
+                            onClick={() => handleAgregar(reporte.producto)}
                           >
-                            ⚙️
+                            +
                           </button>
-                          {critico && <span className="badge-critico">!</span>}
-                          <span className={critico ? 'text-danger' : ''}>
-                            {reporte.producto}
-                          </span>
                         </td>
                         <td className={`text-right ${critico ? 'text-danger' : ''}`}>
                           {reporte.cantidad}
@@ -146,6 +165,23 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+
+        {/* ── Lista de seleccionados ─────────────────── */}
+        {seleccionados.length > 0 && (
+          <section className="dashboard__seleccionados">
+            <div className="seleccionados__header">
+              <h2 className="seleccionados__title">Productos seleccionados</h2>
+              <button className="btn-copiar" onClick={handleCopiar}>
+                📋 Copiar todo
+              </button>
+            </div>
+            <ul className="seleccionados__list">
+              {seleccionados.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </section>
+        )}
       </main>
 
       {/* ── Modal Stock Crítico ──────────────────────── */}
