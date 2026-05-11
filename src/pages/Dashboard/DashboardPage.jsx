@@ -16,6 +16,26 @@ export default function DashboardPage() {
   const [modalProducto, setModalProducto] = useState(null);
   const [seleccionados, setSeleccionados] = useState([]);
 
+  // Búsqueda local sobre la tabla cargada
+  const [busqueda, setBusqueda] = useState('');
+  const [reportesFiltrados, setReportesFiltrados] = useState(null); // null = sin filtro
+  const filtrando = reportesFiltrados !== null;
+
+  const handleBuscar = () => {
+    const termino = busqueda.trim().toLowerCase();
+    if (!termino) return;
+    setReportesFiltrados(
+      reportes.filter((r) => r.producto?.toLowerCase().includes(termino))
+    );
+  };
+
+  const handleLimpiarBusqueda = () => {
+    setBusqueda('');
+    setReportesFiltrados(null);
+  };
+
+  const reportesMostrados = reportesFiltrados ?? reportes;
+
   const handleAgregar = (producto) => {
     setSeleccionados((prev) => [...prev, producto]);
   };
@@ -50,9 +70,9 @@ export default function DashboardPage() {
   };
 
   // Resumen estadístico
-  const totalVendido = reportes.reduce((sum, r) => sum + r.cantidad, 0);
-  const totalProductos = new Set(reportes.map((r) => r.producto)).size;
-  const productosCriticos = reportes.filter(esCritico).length;
+  const totalVendido = reportesMostrados.reduce((sum, r) => sum + r.cantidad, 0);
+  const totalProductos = new Set(reportesMostrados.map((r) => r.producto)).size;
+  const productosCriticos = reportesMostrados.filter(esCritico).length;
 
   return (
     <div className="dashboard">
@@ -95,14 +115,47 @@ export default function DashboardPage() {
             )}
           </h2>
 
+          {/* ── Barra de búsqueda ──────────────────────── */}
+          <div className="dashboard__search-bar">
+            <input
+              type="text"
+              className="search-bar__input"
+              placeholder="Buscar producto..."
+              value={busqueda}
+              disabled={filtrando}
+              onChange={(e) => setBusqueda(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !filtrando) handleBuscar();
+              }}
+            />
+            <button
+              className="search-bar__btn search-bar__btn--buscar"
+              onClick={handleBuscar}
+              disabled={filtrando || !busqueda.trim()}
+            >
+              🔍 Buscar
+            </button>
+            <button
+              className="search-bar__btn search-bar__btn--limpiar"
+              onClick={handleLimpiarBusqueda}
+            >
+              ✖ Limpiar
+            </button>
+            {filtrando && (
+              <span className="search-bar__info">
+                {reportesFiltrados.length} resultado{reportesFiltrados.length !== 1 ? 's' : ''} para &ldquo;{busqueda}&rdquo;
+              </span>
+            )}
+          </div>
+
           {error && <div className="dashboard__error">⚠️ {error}</div>}
 
           {loading ? (
             <Loader message="Cargando reportes..." />
-          ) : reportes.length === 0 ? (
+          ) : reportesMostrados.length === 0 ? (
             <div className="dashboard__empty">
               <span className="dashboard__empty-icon">📋</span>
-              <p>No hay reportes disponibles.</p>
+              <p>{filtrando ? 'Sin resultados para esa búsqueda.' : 'No hay reportes disponibles.'}</p>
             </div>
           ) : (
             <div className="table-responsive">
@@ -116,7 +169,7 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {reportes.map((reporte) => {
+                  {reportesMostrados.map((reporte) => {
                     const critico = esCritico(reporte);
                     return (
                       <tr key={reporte.id} className={critico ? 'row--critico' : ''}>
