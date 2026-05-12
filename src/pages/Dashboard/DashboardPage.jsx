@@ -255,13 +255,17 @@ export default function DashboardPage() {
                           </button>
                         </td>
                         <td className={`text-right ${critico ? 'text-danger' : ''}`}>
-                          {reporte.cantidad}{reporte.tipo ? ` ${reporte.tipo}` : ''}
+                          {(() => {
+                            const t = reporte.tipo;
+                            const tipoValido = t && typeof t === 'string' && t.trim() !== '' && t.trim() !== 'null' && t.trim() !== 'undefined';
+                            return tipoValido ? `${reporte.cantidad} ${t.trim()}` : String(reporte.cantidad);
+                          })()}
                         </td>
                         <td className={`text-right ${critico ? 'text-danger font-bold' : ''}`}>
                           {reporte.stock_actual}
                         </td>
                         <td className="text-center text-muted">
-                          {reporte.fecha ? reporte.fecha.split('T')[0] : '—'}
+                          {reporte.fecha ? reporte.fecha.split('T')[0].replace(/-/g, '/') : '—'}
                         </td>
                       </tr>
                     );
