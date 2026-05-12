@@ -163,7 +163,7 @@ export default function DashboardPage() {
                 <thead>
                   <tr>
                     <th>Producto</th>
-                    <th className="text-right">Vendidos en el día</th>
+                    <th className="text-right">Último movimiento</th>
                     <th className="text-right">Stock Actual</th>
                     <th className="text-center">Fecha</th>
                   </tr>
@@ -202,7 +202,7 @@ export default function DashboardPage() {
                           </button>
                         </td>
                         <td className={`text-right ${critico ? 'text-danger' : ''}`}>
-                          {reporte.cantidad}
+                          {reporte.cantidad}{reporte.tipo ? ` ${reporte.tipo}` : ''}
                         </td>
                         <td className={`text-right ${critico ? 'text-danger font-bold' : ''}`}>
                           {reporte.stock_actual}
