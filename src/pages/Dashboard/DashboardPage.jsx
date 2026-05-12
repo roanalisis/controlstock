@@ -21,6 +21,22 @@ export default function DashboardPage() {
   const [reportesFiltrados, setReportesFiltrados] = useState(null); // null = sin filtro
   const filtrando = reportesFiltrados !== null;
 
+  // Ordenamiento local
+  const [sortCol, setSortCol] = useState('producto');
+  const [sortDir, setSortDir] = useState('asc');
+
+  const handleSort = (col) => {
+    setSortDir((prev) => (sortCol === col ? (prev === 'asc' ? 'desc' : 'asc') : 'asc'));
+    setSortCol(col);
+  };
+
+  const sortIndicator = (col) => {
+    if (sortCol !== col) return <span className="sort-icon sort-icon--idle">&#8597;</span>;
+    return sortDir === 'asc'
+      ? <span className="sort-icon sort-icon--active">&#9650;</span>
+      : <span className="sort-icon sort-icon--active">&#9660;</span>;
+  };
+
   const handleBuscar = () => {
     const termino = busqueda.trim().toLowerCase();
     if (!termino) return;
@@ -34,7 +50,28 @@ export default function DashboardPage() {
     setReportesFiltrados(null);
   };
 
-  const reportesMostrados = reportesFiltrados ?? reportes;
+  const reportesBase = reportesFiltrados ?? reportes;
+
+  const reportesMostrados = [...reportesBase].sort((a, b) => {
+    let valA, valB;
+    if (sortCol === 'producto') {
+      valA = (a.producto ?? '').toLowerCase();
+      valB = (b.producto ?? '').toLowerCase();
+      return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    if (sortCol === 'cantidad') {
+      valA = a.cantidad ?? 0;
+      valB = b.cantidad ?? 0;
+    } else if (sortCol === 'stock_actual') {
+      valA = a.stock_actual ?? 0;
+      valB = b.stock_actual ?? 0;
+    } else if (sortCol === 'fecha') {
+      valA = a.fecha ?? '';
+      valB = b.fecha ?? '';
+      return sortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    return sortDir === 'asc' ? valA - valB : valB - valA;
+  });
 
   const handleAgregar = (producto) => {
     setSeleccionados((prev) => [...prev, producto]);
@@ -162,10 +199,26 @@ export default function DashboardPage() {
               <table className="stock-table">
                 <thead>
                   <tr>
-                    <th>Producto</th>
-                    <th className="text-right">Último movimiento</th>
-                    <th className="text-right">Stock Actual</th>
-                    <th className="text-center">Fecha</th>
+                    <th>
+                      <button className="th-sort" onClick={() => handleSort('producto')}>
+                        Producto {sortIndicator('producto')}
+                      </button>
+                    </th>
+                    <th className="text-right">
+                      <button className="th-sort" onClick={() => handleSort('cantidad')}>
+                        Último movimiento {sortIndicator('cantidad')}
+                      </button>
+                    </th>
+                    <th className="text-right">
+                      <button className="th-sort" onClick={() => handleSort('stock_actual')}>
+                        Stock Actual {sortIndicator('stock_actual')}
+                      </button>
+                    </th>
+                    <th className="text-center">
+                      <button className="th-sort" onClick={() => handleSort('fecha')}>
+                        Fecha {sortIndicator('fecha')}
+                      </button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
