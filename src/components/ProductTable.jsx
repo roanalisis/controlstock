@@ -1,5 +1,18 @@
 import './ProductTable.css';
 
+function formatFecha(fecha) {
+  if (!fecha) return '—';
+  const [datePart, timePart] = fecha.split(/[T ]/);
+  if (timePart) {
+    return (
+      <>
+        {datePart} <span className="fecha-hora">{timePart.split('.')[0]}</span>
+      </>
+    );
+  }
+  return datePart;
+}
+
 /**
  * Tabla de productos con ventas y stock.
  * Resalta en rojo las filas con stock crítico.
@@ -59,7 +72,7 @@ export default function ProductTable({ reportes, onConfigurarCritico }) {
                   </button>
                 </td>
                 <td className="text-center text-muted">
-                  {reporte.fecha ?? '—'}
+                  {formatFecha(reporte.fecha)}
                 </td>
               </tr>
             );
