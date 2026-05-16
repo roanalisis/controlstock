@@ -59,7 +59,17 @@ export default function ProductTable({ reportes, onConfigurarCritico }) {
                   </button>
                 </td>
                 <td className="text-center text-muted">
-                  {reporte.fecha ?? '—'}
+                  {reporte.fecha
+                    ? new Date(reporte.fecha).toLocaleString('es-AR', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                      })
+                    : '—'}
                 </td>
               </tr>
             );
